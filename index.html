@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Видеозвонок</title>
+  <meta name="description" content="Видеозвонки с камерой, микрофоном и показом экрана прямо в браузере — без регистрации.">
+  <meta name="theme-color" content="#0b0d10">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f8cff'/%3E%3Cpath d='M7 11.5a2.5 2.5 0 0 1 2.5-2.5h8a2.5 2.5 0 0 1 2.5 2.5v9a2.5 2.5 0 0 1-2.5 2.5h-8A2.5 2.5 0 0 1 7 20.5z' fill='white'/%3E%3Cpath d='m21 14 4.2-2.6a.5.5 0 0 1 .8.4v8.4a.5.5 0 0 1-.8.4L21 18z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Вход -->
+  <main id="lobby" class="lobby">
+    <section class="preview-wrap">
+      <div class="preview tile self no-video" id="preview">
+        <video id="previewVideo" autoplay playsinline muted></video>
+        <div class="avatar"><span id="previewInitial">?</span></div>
+        <div class="preview-note" id="previewNote">Запрашиваю камеру и микрофон…</div>
+        <div class="preview-controls">
+          <button class="ctrl" id="pvMic" type="button" title="Микрофон" aria-label="Микрофон" data-icon="mic"></button>
+          <button class="ctrl" id="pvCam" type="button" title="Камера" aria-label="Камера" data-icon="video"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="join-card">
+      <div class="brand"><span class="brand-mark" data-icon="video"></span>Видеозвонок</div>
+      <h1 id="lobbyTitle">Новая встреча</h1>
+      <p class="lead" id="lobbyLead">Камера, микрофон и показ экрана прямо в браузере. Ничего устанавливать не нужно.</p>
+
+      <label class="field">
+        <span>Как вас зовут</span>
+        <input id="nameInput" type="text" maxlength="40" autocomplete="name" placeholder="Например, Алик">
+      </label>
+
+      <button class="btn primary" id="joinBtn" type="button">Создать встречу</button>
+
+      <div class="or" id="orBlock"><span>или войти по ссылке</span></div>
+      <form class="code-row" id="codeForm">
+        <input id="codeInput" type="text" placeholder="Ссылка или код комнаты" autocomplete="off" spellcheck="false">
+        <button class="btn" type="submit">Войти</button>
+      </form>
+
+      <p class="hint" id="lobbyError" role="alert" hidden></p>
+    </section>
+  </main>
+
+  <!-- Встреча -->
+  <div id="room" class="room" hidden>
+    <header class="topbar">
+      <div class="room-info">
+        <span class="net-dot" id="netDot" title="Связь с сервером"></span>
+        <span class="room-code" id="roomCode"></span>
+        <span class="count" id="peopleCount">1</span>
+      </div>
+      <button class="btn small" id="inviteBtn" type="button"><span data-icon="userPlus"></span>Пригласить</button>
+    </header>
+
+    <div class="body">
+      <section class="stage" id="stage">
+        <div class="main-slot" id="mainSlot"></div>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <aside class="chat" id="chat" hidden>
+        <div class="chat-head">
+          <strong>Чат встречи</strong>
+          <button class="icon-btn" id="chatClose" type="button" aria-label="Закрыть чат" data-icon="x"></button>
+        </div>
+        <div class="chat-list" id="chatList">
+          <p class="chat-empty" id="chatEmpty">Сообщения видят все участники. Удобно, чтобы скинуть ссылку.</p>
+        </div>
+        <form class="chat-form" id="chatForm">
+          <input id="chatInput" type="text" maxlength="1000" placeholder="Сообщение…" autocomplete="off">
+          <button class="icon-btn send" type="submit" aria-label="Отправить" data-icon="send"></button>
+        </form>
+      </aside>
+    </div>
+
+    <footer class="controls">
+      <button class="ctrl" id="micBtn" type="button" title="Микрофон" aria-label="Микрофон" data-icon="mic"></button>
+      <button class="ctrl" id="camBtn" type="button" title="Камера" aria-label="Камера" data-icon="video"></button>
+      <button class="ctrl" id="shareBtn" type="button" title="Показать экран" aria-label="Показать экран" data-icon="screen"></button>
+      <button class="ctrl" id="chatBtn" type="button" title="Чат" aria-label="Чат" data-icon="chat"><span class="badge" id="chatBadge" hidden></span></button>
+      <button class="ctrl leave" id="leaveBtn" type="button" title="Выйти" aria-label="Выйти" data-icon="leave"></button>
+    </footer>
+
+    <button class="unmute-all" id="unmuteAll" type="button" hidden>Нажмите, чтобы включить звук</button>
+  </div>
+
+  <!-- После выхода -->
+  <main id="left" class="left" hidden>
+    <h1>Вы вышли из встречи</h1>
+    <div class="left-actions">
+      <button class="btn primary" id="rejoinBtn" type="button">Вернуться</button>
+      <a class="btn" href="./">На главную</a>
+    </div>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="vendor/peerjs-1.5.5.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
